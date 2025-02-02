@@ -83,14 +83,6 @@ mainly to reduce dependencies, and incompatibilities with other logging framewor
 `SecureMail` is known to work with:
 
 - Java 1.8 and higher
-
-## Future Work
-Future work for this library include:
-
-- [ ] Add Signature to mails
-- [ ] Gradle build
-- [ ] Decryption and Authentication of mails
-
 ## License
 
 This library and all the contents in this repository are licenced under the MIT license. 
