@@ -1,5 +1,7 @@
 # SecureMail
-(This repository has been moved from my old repository on Feb 2025)
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+
+(This repository has been moved from my own old repository on Feb 2025)
 
 This is a Java library for encrypting multipart emails with `PGP` or `S/MIME`. This library was conceived in order to 
 address the need to encrypt using asymmetric keys. While most of the popular mail providers secure 
