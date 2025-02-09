@@ -1,7 +1,6 @@
 package com.github.estegp.secure.mail.mimemultipart;
 
 import com.github.estegp.secure.mail.exceptions.EncryptMailException;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import com.github.estegp.secure.mail.mimemultipart.helper.MailBuilder;
@@ -15,7 +14,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EncryptMailPGPTest {
 
@@ -38,7 +37,6 @@ public class EncryptMailPGPTest {
         EncryptMailPGPTest.msg = MailBuilder.buildContent();
         EncryptMailPGPTest.bodyPart = MailBuilder.buildPart();
     }
-
 
     @Test
     public void encryptMultiPart()  {
@@ -63,8 +61,4 @@ public class EncryptMailPGPTest {
             fail("Unexpected Exception");
         }
     }
-
-
-
-
 }

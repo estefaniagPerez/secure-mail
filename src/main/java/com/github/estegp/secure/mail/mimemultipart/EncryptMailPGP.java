@@ -5,44 +5,29 @@
  */
 package com.github.estegp.secure.mail.mimemultipart;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
 import com.github.estegp.secure.mail.exceptions.EncryptMailException;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.openpgp.PGPCompressedData;
 import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
-import org.bouncycastle.openpgp.PGPEncryptedData;
 import org.bouncycastle.openpgp.PGPEncryptedDataGenerator;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPLiteralData;
-import org.bouncycastle.openpgp.PGPPublicKey;
-import org.bouncycastle.openpgp.PGPPublicKeyRing;
-import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
-import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
-import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
-import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
 
 /**
  * This class implements the encryption of emails with PGP
  */
-public class EncryptMailPGP extends EncryptMail{
-
+public class EncryptMailPGP implements EncryptMail{
+    private byte[] puk;
     /**
      * Constructor
      * @param puk the public key used to encrypt the emails.
@@ -58,14 +43,12 @@ public class EncryptMailPGP extends EncryptMail{
             // 1. Puts the msg as the message content
             message.setContent(msg, msg.getContentType());
             // 2. Convert the message to a byte array
-            ByteArrayOutputStream out = new ByteArrayOutputStream();    // ByteArrayOutputStream Close() method does nothing, no need to call it
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
             message.writeTo(out);
             // 3. Encrypt the message
-            OutputStream crypt = this.encrypt(this.loadKey(),out.toByteArray());
+            byte[] crypt = this.encrypt(out.toByteArray());
             // 4. Build the MimeBodypart from the encrypted message
-            return this.buildMail(
-                new String(((ByteArrayOutputStream)crypt).toByteArray())
-            );
+            return this.buildMail(new String(crypt));
         }catch (IOException | PGPException | MessagingException ex){
             throw new EncryptMailException(ex);
         }
@@ -83,11 +66,9 @@ public class EncryptMailPGP extends EncryptMail{
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             message.writeTo(out);
             // 3. Encrypt the message
-            OutputStream crypt = this.encrypt(this.loadKey(), out.toByteArray());
+            byte[] crypt = this.encrypt(out.toByteArray());
             // 4. Build the MimeBodypart from the encrypted message
-            return this.buildMail(
-                    new String(((ByteArrayOutputStream) crypt).toByteArray())
-            );
+            return this.buildMail(new String(crypt));
         }catch (IOException | PGPException | MessagingException ex)
         {
             throw new EncryptMailException(ex);
@@ -127,47 +108,6 @@ public class EncryptMailPGP extends EncryptMail{
         finalPart.setContent(multipart);
         return finalPart;
     }
-    
-    /**
-     * Loads the byte array public key / certificate into a PGPPublicKey so it can
-     * be used to encrypt the emails.
-     * @return the PGPPublicKey object
-     */
-    private PGPPublicKey loadKey() throws IOException, PGPException{
-        InputStream keyIn = new ByteArrayInputStream(this.puk);    // ByteArrayOutputStream Close() method does nothing, no need to call it
-        return readPublicKey(keyIn);
-    }
-    
-    /**
-     * Reads the public key / certificate and saves it into a PGPPublicKey so it can
-     * be used to encrypt the emails.
-     * @return the PGPPublicKey object
-     */
-    private PGPPublicKey readPublicKey(InputStream input) throws IOException, PGPException
-    {
-        // Initializes reader
-        PGPPublicKeyRingCollection pgpPub = new PGPPublicKeyRingCollection(
-        PGPUtil.getDecoderStream(input), new JcaKeyFingerprintCalculator());
-
-        // Reads each key in the input stream until it finds the encryption key
-        Iterator keyRingIter = pgpPub.getKeyRings();
-        while (keyRingIter.hasNext())
-        {
-            PGPPublicKeyRing keyRing = (PGPPublicKeyRing)keyRingIter.next();
-
-            Iterator keyIter = keyRing.getPublicKeys();
-            while (keyIter.hasNext())
-            {
-                PGPPublicKey key = (PGPPublicKey)keyIter.next();
-
-                if (key.isEncryptionKey())
-                {
-                    return key;
-                }
-            }
-        }
-        throw new IllegalArgumentException("Can't find encryption key in key ring.");
-    }
 
     /**
      * Encrypts the given data with PGP
@@ -175,32 +115,32 @@ public class EncryptMailPGP extends EncryptMail{
      * @param data the data ti be encrypted
      * @return the encrypted data
      */
-    private OutputStream encrypt(PGPPublicKey key, byte[] data) throws IOException, PGPException{
-        // 1. Sets provider
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        // 2. Opens the output stream where the encrypted text will be written
-        OutputStream outByteStream =  new ByteArrayOutputStream();
-            // The armor is a stream that writes AsCii encoded data in the 
-            // outByteStream, needed for sending the encryption through email
-        OutputStream armoureOut = new ArmoredOutputStream(outByteStream);
-        // 3. Creates temporal file with the data to be encrypted
-        File temp = this.writeTempFile(data);
-        // 4. Initializes the encryptor
-        PGPEncryptedDataGenerator encGen = this.iniEncryptor(key);
-        // 5. Ini compressor
-        PGPCompressedDataGenerator comData =
-                new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
-        // 6. Initializes compressor
-        try (OutputStream cOut = encGen.open(armoureOut, new byte[1 << 16])){
-            // 7. Encrypts and compresses the data in the temporal file
-            PGPUtil.writeFileToLiteralData(
-                    comData.open(cOut), PGPLiteralData.BINARY, temp, new byte[1 << 16]);
-        } finally {
-            // Closes all the streams
-            armoureOut.close();
-            comData.close();
+    private byte[] encrypt(byte[] data) throws IOException, PGPException {
+        byte[] result = null;
+            // 1. Opens the output stream where the encrypted text will be written
+        try(OutputStream outByteStream =  new ByteArrayOutputStream();
+            // 2. The armor is a stream that writes AsCii encoded data in the outByteStream
+            OutputStream armoureOut = new ArmoredOutputStream(outByteStream);) {
+                // 3. Creates temporal file with the data to be encrypted
+                File temp = this.writeTempFile(data);
+                // 4. Initializes the encryptor
+                PGPEncryptedDataGenerator encGen = KeyLoadManager.INSTANCE.iniEncryptorPGP(this.puk);
+                // 5. Ini compressor
+                PGPCompressedDataGenerator comData =
+                        new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
+                // 6. Initializes compressor
+                try (OutputStream cOut = encGen.open(armoureOut, new byte[1 << 16])){
+                    // 7. Encrypts and compresses the data in the temporal file
+                    PGPUtil.writeFileToLiteralData(
+                            comData.open(cOut), PGPLiteralData.BINARY, temp, new byte[1 << 16]);
+                } finally {
+                    // Closes all the streams
+                    comData.close();
+                }
+                
+                result = ((ByteArrayOutputStream) outByteStream).toByteArray();
         }
-        return outByteStream;
+        return result;
     }
     
     /**
@@ -217,23 +157,5 @@ public class EncryptMailPGP extends EncryptMail{
             throw ex;
         }
         return temp;
-    }
-    
-    /**
-     * Initializes the PGP encryptor.
-     * @param key the public key that will be used to encrypt the data.
-     * @return the encryptor
-     */
-    private PGPEncryptedDataGenerator iniEncryptor(PGPPublicKey key){
-        PGPEncryptedDataGenerator encGen = 
-            new PGPEncryptedDataGenerator(
-                new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5).
-                                    setSecureRandom(new SecureRandom()).
-                                    setProvider("BC")
-            ); 
-        encGen.addMethod(
-            new JcePublicKeyKeyEncryptionMethodGenerator(key).setProvider("BC"));
-        return encGen;
-        
     }
 }

@@ -7,8 +7,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EncryptMailFactoryTest {
 
@@ -29,30 +28,29 @@ class EncryptMailFactoryTest {
         try (InputStream stream = new FileInputStream(dir)){
             EncryptMailFactoryTest.smimeKey = stream.readAllBytes();
         }
-
     }
 
     @Test
     public void TestGetMime() {
         EncryptMail instance = new EncryptMailFactory(EncryptMailFactory.SMIME, this.genKey).getEncryptor();
-        assertThat(instance, instanceOf(EncryptSMIME.class));
+        assertInstanceOf(EncryptSMIME.class, instance);
     }
 
     @Test
     public void TestGetPGP() {
         EncryptMail instance = new EncryptMailFactory(EncryptMailFactory.PGP, this.genKey).getEncryptor();
-        assertThat(instance, instanceOf(EncryptMailPGP.class));
+        assertInstanceOf(EncryptMailPGP.class, instance);
     }
 
     @Test
     public void TestGetMimeByKey() {
         EncryptMail instance = new EncryptMailFactory(EncryptMailFactoryTest.smimeKey).getEncryptor();
-        assertThat(instance, instanceOf(EncryptSMIME.class));
+        assertInstanceOf(EncryptSMIME.class, instance);
     }
 
     @Test
     public void TestGetPGPByKey() {
         EncryptMail instance = new EncryptMailFactory(EncryptMailFactoryTest.pgpKey).getEncryptor();
-        assertThat(instance, instanceOf(EncryptMailPGP.class));
+        assertInstanceOf(EncryptMailPGP.class, instance);
     }
 }

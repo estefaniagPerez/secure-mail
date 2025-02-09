@@ -1,0 +1,4 @@
+/home/usernormal/projects/secure_mail/secure-mail/src/test/java/com/github/estegp/secure/mail/mimemultipart/EncryptMailFactoryTest.java
+/home/usernormal/projects/secure_mail/secure-mail/src/test/java/com/github/estegp/secure/mail/mimemultipart/EncryptMailPGPTest.java
+/home/usernormal/projects/secure_mail/secure-mail/src/test/java/com/github/estegp/secure/mail/mimemultipart/EncryptSMIMETest.java
+/home/usernormal/projects/secure_mail/secure-mail/src/test/java/com/github/estegp/secure/mail/mimemultipart/helper/MailBuilder.java

@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EncryptSMIMETest {
 
@@ -39,7 +39,6 @@ public class EncryptSMIMETest {
         EncryptSMIMETest.msg = MailBuilder.buildContent();
         EncryptSMIMETest.bodyPart = MailBuilder.buildPart();
     }
-
 
     @Test
     public void encryptMultiPart() {

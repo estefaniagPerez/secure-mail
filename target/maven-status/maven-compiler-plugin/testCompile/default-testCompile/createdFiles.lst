@@ -1,0 +1,4 @@
+com/github/estegp/secure/mail/mimemultipart/EncryptMailFactoryTest.class
+com/github/estegp/secure/mail/mimemultipart/helper/MailBuilder.class
+com/github/estegp/secure/mail/mimemultipart/EncryptSMIMETest.class
+com/github/estegp/secure/mail/mimemultipart/EncryptMailPGPTest.class
