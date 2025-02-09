@@ -1,6 +1,0 @@
-/home/usernormal/projects/secure_mail/secure-mail/src/main/java/com/github/estegp/secure/mail/exceptions/EncryptMailException.java
-/home/usernormal/projects/secure_mail/secure-mail/src/main/java/com/github/estegp/secure/mail/mimemultipart/EncryptMail.java
-/home/usernormal/projects/secure_mail/secure-mail/src/main/java/com/github/estegp/secure/mail/mimemultipart/EncryptMailFactory.java
-/home/usernormal/projects/secure_mail/secure-mail/src/main/java/com/github/estegp/secure/mail/mimemultipart/EncryptMailPGP.java
-/home/usernormal/projects/secure_mail/secure-mail/src/main/java/com/github/estegp/secure/mail/mimemultipart/EncryptSMIME.java
-/home/usernormal/projects/secure_mail/secure-mail/src/main/java/com/github/estegp/secure/mail/mimemultipart/KeyLoadManager.java
