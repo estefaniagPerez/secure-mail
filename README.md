@@ -85,7 +85,7 @@ mainly to reduce dependencies, and incompatibilities with other logging framewor
 ## Minimal Required JDK
 `SecureMail` is known to work with:
 
-- Java 1.8 and higher
+- Java 1.21 and higher
 ## License
 
 This library and all the contents in this repository are licenced under the MIT license. 
