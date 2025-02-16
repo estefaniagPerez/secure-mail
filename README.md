@@ -4,10 +4,10 @@
 (This repository was moved from my old repository on Feb 2025)
 
 This is a Java library for encrypting multipart emails with `PGP` or `S/MIME`. This library was conceived to 
-address email encrypt using asymmetric keys. While most of the popular mail providers secure 
-the mail transmission with SSL (mostly HTTPS), this kind of security does not provide end to end encryption - the mail provider
-server will see the unencrypted mail -. By using these standards it is possible to generate encrypted mails that only 
-the end receiver will be able to read.
+address email encryption using asymmetric keys. While most of the popular mail providers secure 
+the mail transmission with SSL (HTTPS), this kind of security does not provide end to end encryption - the mail provider
+server will see the unencrypted mail -. By using these standards it is possible to generate encrypted mails where only 
+the end user will be able to read.
 
 The library supports:
 
@@ -18,12 +18,12 @@ In this case, the _BouncyCastle_ implementation of `S/MIME` has been reused.
 standard described in the [RFC3156](https://tools.ietf.org/html/rfc3156) document.
 
 ## Usage
-In order to use the library it is only necessary to import the project and then add the project as a _Maven_ 
+To use the library, import the package into your project and then add the package as a _Maven_ 
 dependency.
 
-The library is quite simple to use, and only two steps are neccesary:
+The library is quite easy to use, and only two steps are neccesary:
 
-1. Use the factory to get the mail encryptor instance that we want to use. 
+1. Use the factory to get the mail encryptor instance. 
     - By type: the type of encryptor to be used will be explicitly indicated by the _type_ field.
         ```
         // SMIME encryptor
@@ -35,7 +35,7 @@ The library is quite simple to use, and only two steps are neccesary:
         EncryptMail encryptor_smime = factory.getEncryptor();
         ```
     
-    - By Certificate: the type of encryptor to be used will be deduced by the format of the given certificate.
+    - By Certificate: the type of encryptor to be used will be deduced by the format of the certificate.
         ```
         // SMIME encryptor
         EncryptMailFactory factory = new EncryptSMIME(key_smime);
@@ -51,25 +51,23 @@ The library is quite simple to use, and only two steps are neccesary:
     // Generate mail
     MimeBodyPart mail = encryptor.encryptMultiPart(msg, message);        
     ```
-    Where _msg_ is the object to be sent, and that will contain the final encrypted data.
-    And where _message_ is the object that contains the information to be encrypted.
+    Where _msg_ is the object to be sent, which will contain the final encrypted data.
+    And _message_ is the object that contains the data to be encrypted.
     
     
 #### Certificates
 
-In order to use asymetric encryption - used by both `PGP` and `S/MIME` - it is neccesary to have,
-at least, two keys or certificates. This is known as a public/privated key pair. The idea is to use the public key - that
+In order to use asymetric encryption - used in `PGP` and `S/MIME` - we will need,
+at least, one key and one certificate. This is known as a public/privated key pair. The idea is to use the public key - that
 can be known by anyone - to encrypt the email. This email cannot be decrypted back into plain text with the public
-key - as such anyone can know the public key -, the email can only be decrypted with the privated key, which only
-the recipient knows - this private key needs to be kept in a secure location, and if leaked, anyone will be able to decypt the emails -.
+key, the email can only be decrypted with the privated key, which only the recipient has - this private key needs to be kept in a secure location, and if leaked, anyone will be able to decypt the emails -.
 
 
-Depending on the standard used to encrypt the email, the key pair will be generated in one of the following ways:
+Depending on the standard used to encrypt the email, the key pair is generated in one of the following ways:
 
 
 - `S/MIME`: the keypair can be generated using OpenSSL [ [REF](https://security.stackexchange.com/questions/17583/how-do-i-create-a-valid-email-certificate-for-outlook-s-mime-with-openssl) ]
-The private key needs to be installed on the recipient computer, this way the mail client will be able to
-decrypt the email.
+The private key needs to be installed on the recipient computer, making it possible for the mail client to decrypt it.
 
 - `PGP`: the keypair can be generated using the OpenPGP or GNUPGP software; or in some instances like ThunderBird 
 using the mail client itself [ [REF](https://support.mozilla.org/en-US/kb/digitally-signing-and-encrypting-messages) ].
@@ -77,9 +75,8 @@ using the mail client itself [ [REF](https://support.mozilla.org/en-US/kb/digita
 
 
 #### Logging
-Logging has been left to the end user of the library. Instead, when an error occurs the library will return 
-an `EncryptMailException` with the exeption information. The decision to leave the logging task to the end user is done
-to reduce dependencies, and also, to reduce incompatibilities with other logging frameworks or versions.
+Logging has been left to the end user of the library. When an error occurs the library will return an `EncryptMailException`.
+The decision to leave the logging task to the end-user was made to reduce dependencies and incompatibilities with other logging libraries or versions.
 
 ## Minimal Required JDK
 `SecureMail` is known to work with:
