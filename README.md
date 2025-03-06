@@ -5,7 +5,7 @@
 
 This is a Java library for encrypting multipart emails with `PGP` or `S/MIME`. This library was conceived to 
 address email encryption using asymmetric keys. While most of the popular mail providers secure 
-the mail transmission with SSL (HTTPS), this kind of security does not provide end to end encryption - the mail provider
+the mail transmission with SSL (HTTPS), this kind of security does not provide end to end encryption - the
 server will see the unencrypted mail -. By using these standards it is possible to generate encrypted mails where only 
 the end user will be able to read.
 
