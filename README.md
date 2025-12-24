@@ -38,11 +38,11 @@ The library is quite easy to use, and only two steps are neccesary:
     - By Certificate: the type of encryptor to be used will be deduced by the format of the certificate.
         ```
         // SMIME encryptor
-        EncryptMailFactory factory = new EncryptSMIME(key_smime);
+        EncryptMailFactory factory = new EncryptSmime(key_smime);
         EncryptMail encryptor_smime = factory.getEncryptor();
       
         // PGP encryptor
-        EncryptMailFactory factory = new EncryptSMIME(key_pgp); 
+        EncryptMailFactory factory = new EncryptSmime(key_pgp); 
         EncryptMail encryptor_pgp = factory.getEncryptor(); 
         ```
 
