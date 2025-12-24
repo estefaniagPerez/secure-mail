@@ -30,11 +30,19 @@ jobs:
       # 2. Clean and Verify with Maven
       # - Checkstyle (validate phase)
       # - Spotless (process-sources phase)
+      - name: Maven Clean and Validate
+        run: ./mvnw clean validate
+      
+      # 3. Build and Test with Maven
       # - Compilation (compile phase)
       # - Unit Tests (test phase)
+      - name: Maven Build and Test
+        run: ./mvnw compile test
+      
+      # 4. Full Verify with Maven
       # - SpotBugs & PMD (verify phase)
-      - name: Build with Maven
-        run: ./mvnw clean verify
+      - name: Maven Package and Verify
+        run: ./mvnw package verify
   
   security-scan:
     name: Security Scan with Trivy
