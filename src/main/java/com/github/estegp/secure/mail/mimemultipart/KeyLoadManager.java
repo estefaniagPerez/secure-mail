@@ -3,6 +3,7 @@ package com.github.estegp.secure.mail.mimemultipart;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -88,10 +89,8 @@ public enum KeyLoadManager {
   private PGPEncryptedDataGenerator iniEncryptorPgp(PGPPublicKey key) {
 
     PGPEncryptedDataGenerator encGen =
-        new PGPEncryptedDataGenerator(
-            new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5)
-                .setSecureRandom(new SecureRandom())
-                .setProvider("BC"));
+        new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5)
+            .setSecureRandom(new SecureRandom()).setProvider("BC"));
     encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key).setProvider("BC"));
 
     return encGen;
@@ -110,9 +109,8 @@ public enum KeyLoadManager {
     // ByteArrayOutputStream Close() method does nothing, no need to call it
 
     // Initializes reader
-    PGPPublicKeyRingCollection pgpPub =
-        new PGPPublicKeyRingCollection(
-            PGPUtil.getDecoderStream(keyIn), new JcaKeyFingerprintCalculator());
+    PGPPublicKeyRingCollection pgpPub = new PGPPublicKeyRingCollection(
+        PGPUtil.getDecoderStream(keyIn), new JcaKeyFingerprintCalculator());
 
     // Reads each key in the input stream until it finds the encryption key
     Iterator<PGPPublicKeyRing> keyRingIter = pgpPub.getKeyRings();
