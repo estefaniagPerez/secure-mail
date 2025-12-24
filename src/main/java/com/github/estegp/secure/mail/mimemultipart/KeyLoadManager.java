@@ -130,23 +130,4 @@ public enum KeyLoadManager {
 
     throw new IllegalArgumentException("Can't find encryption key in key ring.");
   }
-
-  /**
-   * TEST METHOD TO TRIGGER SECURITY VULNERABILITIES DETECTION
-   *
-   * @throws Exception
-   */
-  public void testVulnerability() throws Exception {
-    // TRIGGER: Weak Hashing Algorithm (MD5)
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    byte[] hash = md.digest("password".getBytes());
-
-    // TRIGGER: Hardcoded Password
-    String secret = "superSecretPassword123";
-
-    // TRIGGER: Weak Random Number Generator
-    java.util.Random random = new java.util.Random();
-    int key = random.nextInt();
-    System.out.println("Hash: " + hash + " Secret: " + secret + " Key: " + key);
-  }
 }
