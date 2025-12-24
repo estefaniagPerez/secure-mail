@@ -6,10 +6,9 @@
 package com.github.estegp.secure.mail.mimemultipart;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -21,7 +20,7 @@ import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
 import org.bouncycastle.openpgp.PGPEncryptedDataGenerator;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPLiteralData;
-import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.PGPLiteralDataGenerator;
 
 /**
  * This class implements the encryption of emails with PGP
@@ -121,18 +120,18 @@ public class EncryptMailPGP implements EncryptMail{
         try(OutputStream outByteStream =  new ByteArrayOutputStream();
             // 2. The armor is a stream that writes AsCii encoded data in the outByteStream
             OutputStream armoureOut = new ArmoredOutputStream(outByteStream);) {
-                // 3. Creates temporal file with the data to be encrypted
-                File temp = this.writeTempFile(data);
-                // 4. Initializes the encryptor
+                // 3. Initializes the encryptor
                 PGPEncryptedDataGenerator encGen = KeyLoadManager.INSTANCE.iniEncryptorPGP(this.puk);
-                // 5. Ini compressor
+                // 4. Ini compressor
                 PGPCompressedDataGenerator comData =
                         new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
-                // 6. Initializes compressor
+                // 5. Initializes compressor
                 try (OutputStream cOut = encGen.open(armoureOut, new byte[1 << 16])){
-                    // 7. Encrypts and compresses the data in the temporal file
-                    PGPUtil.writeFileToLiteralData(
-                            comData.open(cOut), PGPLiteralData.BINARY, temp, new byte[1 << 16]);
+                    // 6. Encrypts and compresses the data using in-memory processing
+                    PGPLiteralDataGenerator lData = new PGPLiteralDataGenerator();
+                    try (OutputStream pOut = lData.open(comData.open(cOut), PGPLiteralData.BINARY, PGPLiteralData.CONSOLE, data.length, new Date())) {
+                        pOut.write(data);
+                    }
                 } finally {
                     // Closes all the streams
                     comData.close();
@@ -141,21 +140,5 @@ public class EncryptMailPGP implements EncryptMail{
                 result = ((ByteArrayOutputStream) outByteStream).toByteArray();
         }
         return result;
-    }
-    
-    /**
-     * Writes the data to a temporary file.
-     * @param data the data to be write in the file
-     * @return the file
-     */
-    private File writeTempFile(byte[] data) throws IOException{
-        File temp = File.createTempFile("pgp", null);
-        try(FileOutputStream fos = new FileOutputStream(temp)){
-            fos.write(data);
-        }
-        catch (IOException ex){
-            throw ex;
-        }
-        return temp;
     }
 }
