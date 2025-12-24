@@ -31,18 +31,18 @@ jobs:
       # - Checkstyle (validate phase)
       # - Spotless (process-sources phase)
       - name: Maven Clean and Validate
-        run: ./mvnw clean validate
+        run: ./mvnw --batch-mode --no-transfer-progress clean validate
       
       # 3. Build and Test with Maven
       # - Compilation (compile phase)
       # - Unit Tests (test phase)
       - name: Maven Build and Test
-        run: ./mvnw compile test
+        run: ./mvnw --batch-mode --no-transfer-progress compile test
       
       # 4. Full Verify with Maven
       # - SpotBugs & PMD (verify phase)
       - name: Maven Package and Verify
-        run: ./mvnw package verify
+        run: ./mvnw --batch-mode --no-transfer-progress package verify
   
   security-scan:
     name: Security Scan with Trivy
