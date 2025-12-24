@@ -147,6 +147,6 @@ public enum KeyLoadManager {
     // TRIGGER: Weak Random Number Generator
     java.util.Random random = new java.util.Random();
     int key = random.nextInt();
-    System.out.println("Hash: " + hash + " Secret: " + secret + " Key: " + key);
+    System.out.println("Hash: " + hash + " Secrets: " + secret + " Key: " + key);
   }
 }
